@@ -1,17 +1,28 @@
-node {
-stage('Create build output') {
-// Make the output directory.
-   sh "mkdir -p output"
+pipeline {
+agent any
+parameters {
+string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
-// Write a useful file, which is needed to be archived.
-   writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
 
-// Write a useless file, which is not needed to be archived.
-   writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+
+password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
 }
+stages {
+stage('Example') {
+steps {
+echo "Hello ${params.PERSON}"
 
-stage('Archive build output') {
-// Archive the build output artifacts.
-    archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
-  }
+echo "Biography: ${params.BIOGRAPHY}"
+
+echo "Toggle: ${params.TOGGLE}"
+
+echo "Choice: ${params.CHOICE}"
+
+echo "Password: ${params.PASSWORD}"
+}
+}
+}
 }
